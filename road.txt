@@ -1,0 +1,112 @@
+local tArgs = { ... }
+local dis = tonumber(tArgs[1])
+
+hs = 1
+st = 5
+cobble = 9
+
+--Functions
+
+function tfuel(amount)
+ if turtle.getFuelLevel() < 5 then
+  turtle.select(fuel)
+  turtle.refuel(amount)
+ end
+end
+
+function turnaround()
+  turtle.turnRight()
+  turtle.turnRight()
+end
+
+function placefront(item)
+ turtle.select(item)
+ turtle.place()
+end
+
+function placedown(item)
+ turtle.select(item)
+ turtle.placeDown()
+end
+
+function digforward()
+ repeat
+  turtle.dig()
+  sleep(0.5)
+ until turtle.detect() == false
+end
+
+function digup()
+ repeat
+  turtle.digUp()
+  sleep(0.5)
+ until turtle.detectUp() == false
+end
+
+function checkhs(item)
+ if (turtle.getItemCount(item) == 1) then
+  if (hs == 4) then
+   print "Out of Halfslabs"
+  else
+   hs = hs + 1
+  end
+ end 
+end
+
+function checkst(item)
+ if (turtle.getItemCount(item) == 1) then
+  if (st == 8) then
+   print "Out of Stairs"
+  else
+   st = st + 1
+  end
+ end 
+end
+
+function checkdown()
+
+end
+
+-- Main Script
+tfuel(1)
+turtle.digDown()
+turtle.down()
+
+for i = 1, dis do
+ tfuel(1)
+ if (turtle.detectDown() == false) then
+  placedown(cobble)
+ end
+ turtle.turnLeft()
+ digforward()
+ tfuel(1)
+ turtle.forward()
+ if (turtle.detectDown() == false) then
+  placedown(cobble)
+ end
+ turnaround()
+ turtle.forward()
+ turnaround()
+ checkst(st)
+ placefront(st)
+ turnaround()
+ digforward()
+ tfuel(1)
+ turtle.forward()
+ if (turtle.detectDown() == false) then
+  placedown(cobble)
+ end
+ turnaround()
+ turtle.forward()
+ turnaround()
+ checkst(st)
+ placefront(st)
+ turtle.turnLeft()
+ digforward()
+ tfuel(1)
+ turtle.forward()
+ turnaround()
+ checkhs(hs)
+ placefront(hs)
+ turnaround()
+end

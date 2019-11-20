@@ -1,0 +1,9 @@
+--this is just version 1 I have plans for it
+
+local response = http.get( "http://guudelp.com/logsimple.cgi" )
+if response then
+ print( "Got It!" )
+ local sResponse = response.readAll()
+ response.close()
+ print ( sResponse )
+end

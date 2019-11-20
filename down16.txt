@@ -1,0 +1,185 @@
+-- Digging Down to 16 by Guude
+
+-- Vars
+local tArgs = { ... }
+local curh = tonumber(tArgs[1])
+local cw = tArgs[2]
+cw = cw or "y"
+local dest = 16
+local dist = curh - dest
+local roomrad = 10
+local roomsize = 20
+local torch = 1
+local stair = 2
+local cobble = 3
+local fuel = 4
+
+--Functions
+
+function tfuel(amount)
+ if turtle.getFuelLevel() < 5 then
+  turtle.select(fuel)
+  turtle.refuel(amount)
+ end
+end
+
+function turnaround()
+  turtle.turnRight()
+  turtle.turnRight()
+end
+
+function placefront(item)
+ turtle.select(item)
+ turtle.place()
+end
+
+function placedown(item)
+ turtle.select(item)
+ turtle.placeDown()
+end
+
+function placeup(item)
+ turtle.select(item)
+ turtle.placeUp()
+end
+
+function checkwalls()
+ if cw == "y" then
+  turtle.turnRight()
+  if (turtle.detect() == false) then
+   placefront(cobble)
+  end
+  turnaround()
+  if (turtle.detect() == false) then
+   placefront(cobble)
+  end
+  turtle.turnRight()
+ end
+end
+
+function checkwallsL()
+ if cw == "y" then
+  turtle.turnLeft()
+  if (turtle.detect() == false) then
+   placefront(cobble)
+  end
+  tfuel(1)
+  turtle.down()
+  if (turtle.detect() == false) then
+   placefront(cobble)
+  end
+  tfuel(1)
+  turtle.up()
+  turtle.up()
+  if (turtle.detect() == false) then
+   placefront(cobble)
+  end
+  tfuel(1)
+  turtle.down()
+  turtle.turnRight()
+ end
+end
+
+function digfoward()
+ repeat
+  turtle.dig()
+  sleep(0.5)
+ until turtle.detect() == false
+end
+
+function digup()
+ repeat
+  turtle.digUp()
+  sleep(0.5)
+ until turtle.detectUp() == false
+end
+
+
+-- Main Script
+for i = 1, dist do
+ tfuel(1)
+ turtle.digDown()
+ turtle.down()
+ digfoward()
+ checkwalls()
+ if (turtle.detectDown() == false) then
+  placedown(cobble)
+ end
+ tfuel(1)
+ turtle.forward()
+ turnaround()
+ placefront(stair)
+ turnaround()
+ for j=1, 2 do
+  checkwalls()
+  digfoward()
+  tfuel(1)
+  turtle.forward()
+ end
+ turnaround()
+ tfuel(1)
+ turtle.forward()
+ turtle.forward()
+ turnaround()
+ if (i % 4 == 0) then
+  placeup(torch)
+ end
+end
+
+--Clear Room
+
+turtle.turnLeft()
+tfuel(1)
+turtle.up()
+pass = 0
+while (roomsize >= 0) do
+ for r = 1, roomrad do
+  digfoward()
+  tfuel(1)
+  turtle.forward()
+  digup()
+  turtle.digDown()
+  if (pass == 0) then
+   checkwallsL()
+  end
+ end 
+
+ for l = 1, 3 do
+  turtle.turnRight()
+  for r = 1, roomsize do
+   digfoward()
+   tfuel(1) 
+   turtle.forward()
+   digup()
+   turtle.digDown()
+  if (pass == 0) then
+   checkwallsL()
+  end
+   if (r % 6 == 0) then
+    placedown(torch)
+   end
+  end
+ end
+
+ turtle.turnRight()
+ for r = 1, roomrad do
+  digfoward()
+  tfuel(1)
+  turtle.forward()
+  digup()
+  turtle.digDown()
+  if (pass == 0) then
+   checkwallsL()
+  end
+ end
+ tfuel(1)
+ turtle.forward()
+ turtle.turnRight()
+ digfoward()
+ tfuel(1)
+ turtle.forward()
+ turtle.turnLeft()
+ pass = pass + 1
+ roomrad = roomrad - 1
+ roomsize = roomsize - 2
+end
